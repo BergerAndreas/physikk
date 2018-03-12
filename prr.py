@@ -47,6 +47,7 @@ xn_sol = []
 yn_sol = []
 kn_sol = []
 pn_sol = []
+en_sol = []
 
 for n in range(0,steps):
     vn = vn + dt*dvdt(xn,vn)
@@ -67,18 +68,20 @@ pn_sol_min = min(pn_sol)
 for i in range(len(pn_sol)):
     pn_sol[i] = pn_sol[i] - pn_sol_min
 
+#bergen total energi
+for i in range(len(pn_sol)):
+    en_sol.append(pn_sol[i] + kn_sol[i])
 
 x = np.linspace(0,45,steps)
 #plt.plot(x,bergenet_k)
 #plt.plot(x,yn_sol)
 #plt.plot(x,vnx_sol)
-#plt.axhline(y=0)
-#plt.plot(x, beregnet_p)
+plt.axhline(y=0, color = "black")
+plt.axvline(x=0, color = "black")
 plt.xlabel("Time s")
 plt.ylabel("Energy [J]")
 plt.title("Numerical total energy plot")
-plt.plot(x,pn_sol)
-plt.plot(x, kn_sol)
-#func = beregnet_p[0]*np.exp(-0.071*x)
+plt.plot(x, en_sol)
+#func = 0.6*pn_sol[0]*np.exp(-0.071*x)
 #plt.plot(x, func)
 plt.show()
