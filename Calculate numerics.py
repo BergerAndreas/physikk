@@ -1,5 +1,8 @@
 from math import sin,cos
 from matplotlib import pyplot as plt
+from matplotlib import pylab
+from pylab import *
+from math import log
 import numpy as np
 
 def iptrack(filename):
@@ -25,7 +28,7 @@ vn = 0 # initial value y(0) = 1
 dt = 0.001 # step size
 m = 0.0051
 g = 9.81
-c = 0.0015
+c = 0.0013
 
 def dvdt(xn,vn): # right hand side of the ODE written on the form y' = f(x,y)
 
@@ -72,10 +75,34 @@ for i in range(len(pn_sol)):
 for i in range(len(pn_sol)):
     en_sol.append(pn_sol[i] + kn_sol[i])
 
+
 x = np.linspace(0,45,steps)
+def fitExponent(tList,yList,ySS=0):
+   '''
+   This function finds a 
+       tList in sec
+       yList - measurements
+       ySS - the steady state value of y
+   returns
+       amplitude of exponent
+       tau - the time constant
+   '''
+   bList = [log(max(y-ySS,1e-6)) for y in yList]
+   b = matrix(bList).T
+   rows = [ [1,t] for t in tList]
+   A = matrix(rows)
+   #w = (pinv(A)*b)
+   (w,residuals,rank,sing_vals) = lstsq(A,b)
+   tau = -1.0/w[1,0]
+   amplitude = exp(w[0,0])
+   return (amplitude,tau)
+print(fitExponent(x,en_sol, min(en_sol)))
+
+
 #plt.plot(x,bergenet_k)
 #plt.plot(x,yn_sol)
 #plt.plot(x,vnx_sol)
+func = en_sol[0]*np.exp(- x/6.840358227028433)
 plt.axhline(y=0, color = "black")
 plt.axvline(x=0, color = "black")
 plt.xlabel("Time [s]")
